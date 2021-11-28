@@ -1,8 +1,5 @@
 #include "Person.h"
 
-/// <summary>
-/// Default constructor
-/// </summary>
 Person::Person()
 {
 	name = "empty";

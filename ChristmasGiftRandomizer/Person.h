@@ -3,15 +3,42 @@
 #include <string>
 #include <iostream>
 
+/// <summary>
+/// Holds all of the data pertaining to a person that will need to be 
+/// identified with a string and a integer.
+/// </summary>
 class Person
 {
 public:
-	std::string name; // Holds the string name
-	int ID; // holds the id that the person will get
-	int matchedID; // holds the id of another person
+	/// <summary>
+	/// Holds the name data of the person.
+	/// </summary>
+	std::string name;
+
+	/// <summary>
+	/// unique ID used in identifying a person besides the string name.
+	/// </summary>
+	int ID;
+
+	/// <summary>
+	/// used to match another ID (person) with the current person.
+	/// </summary>
+	int matchedID;
+
+	/// <summary>
+	/// Default constructor.
+	/// </summary>
 	Person();
+
+	/// <summary>
+	/// Construct a person with a name.
+	/// </summary>
+	/// <param name="n">The name of the person.</param>
 	Person(std::string n);
 
+	/// <summary>
+	/// Displays all of the current person data info such as ID and matchedID with the string name.
+	/// </summary>
 	void DisplayInfo();
 
 };

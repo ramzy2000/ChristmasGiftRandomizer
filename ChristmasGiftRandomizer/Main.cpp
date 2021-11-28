@@ -8,6 +8,10 @@
 #include "Group.h"
 
 
+/// <summary>
+/// Entry point of the application
+/// </summary>
+/// <returns>Exit code</returns>
 int main()
 {
 	Group group;
