@@ -21,14 +21,22 @@ Group::~Group()
 
 void Group::DisplayGroupInfo()
 {
-	for (int i = 0; i < personVec.size(); i++)
+	if (!fileIsEmpty)
 	{
-		personVec[i]->DisplayInfo();
+		for (int i = 0; i < personVec.size(); i++)
+		{
+			personVec[i]->DisplayInfo();
+		}
+	}
+	else
+	{
+		std::cout << fileSource << " is empty." << std::endl;
 	}
 }
 
 void Group::openFile()
 {
+	std::ofstream* fileTemp = new std::ofstream;
 	try
 	{
 		file.open(fileSource, std::fstream::in);
@@ -42,31 +50,43 @@ void Group::openFile()
 		switch (x)
 		{
 		case 99:
-			std::cout << "ERROR::FILE::NOT::OPENED" << '\a' << std::endl;
-			std::cout << "create a " << fileSource << " file to fix" << std::endl;
-			system("pause");
-			std::exit(-1);
+			std::cout << "Failed to open " << fileSource << std::endl;
+			std::cout << "Creating " << fileSource << std::endl;
+			file.close();
+			fileTemp->open(fileSource, std::ios::out);
+			fileTemp->close();
 			break;
 		default:
 			break;
 		}
 	}
+	delete fileTemp;
 	file.close();
 }
 
 void Group::loadPersonData()
 {
 	int counter = 0;
+	std::string content;
 	file.open(fileSource);
 	while (!file.eof())
 	{
 		std::string line = "";
 		std::getline(file, line);
+		content = line + content;
 		Person* personPtr = new Person;
 		personPtr->name = line;
 		counter++;
 		personPtr->ID = counter;
 		personVec.push_back(personPtr);
+	}
+	if (content == "")
+	{
+		fileIsEmpty = true;
+	}
+	else
+	{
+		fileIsEmpty = false;
 	}
 	file.close();
 }
@@ -82,8 +102,15 @@ void Group::deletePersonData()
 
 void Group::DisplayNames()
 {
-	for (Person* element : personVec)
+	if (!fileIsEmpty)
 	{
-		std::cout << element->name << std::endl;
+		for (Person* element : personVec)
+		{
+			std::cout << element->name << std::endl;
+		}
+	}
+	else
+	{
+		std::cout << fileSource << " is empty." << std::endl;
 	}
 }

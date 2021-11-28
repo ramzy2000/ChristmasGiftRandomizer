@@ -22,6 +22,8 @@ struct Group
 	/// </summary>
 	std::fstream file;
 
+	bool fileIsEmpty = false;
+
 	/// <summary>
 	/// Holds name of the text file group is reading from
 	/// </summary>

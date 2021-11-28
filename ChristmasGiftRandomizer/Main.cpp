@@ -14,8 +14,13 @@
 /// <returns>Exit code</returns>
 int main()
 {
-	Group group;
-	group.DisplayGroupInfo();
-	std::cin.get();
+	while (true)
+	{
+		system("cls");
+		Group group;
+		group.DisplayGroupInfo();
+		std::cout << "press enter to try again." << std::endl;
+		std::cin.get();
+	}
 	return 0;
 }
