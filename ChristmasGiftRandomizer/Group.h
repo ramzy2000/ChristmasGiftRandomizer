@@ -20,6 +20,8 @@ struct Group
 
 	~Group();
 
+	void DisplayGroupInfo();
+
 	void openFile();
 
 	void loadPersonData();

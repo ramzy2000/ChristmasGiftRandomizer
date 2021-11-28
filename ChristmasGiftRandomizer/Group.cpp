@@ -19,6 +19,14 @@ Group::~Group()
 	deletePersonData();
 }
 
+void Group::DisplayGroupInfo()
+{
+	for (int i = 0; i < personVec.size(); i++)
+	{
+		personVec[i]->DisplayInfo();
+	}
+}
+
 void Group::openFile()
 {
 	try
@@ -35,7 +43,7 @@ void Group::openFile()
 		{
 		case 99:
 			std::cout << "ERROR::FILE::NOT::OPENED" << '\a' << std::endl;
-			std::cout << "create a names.txt file to fix" << std::endl;
+			std::cout << "create a " << fileSource << " file to fix" << std::endl;
 			system("pause");
 			std::exit(-1);
 			break;

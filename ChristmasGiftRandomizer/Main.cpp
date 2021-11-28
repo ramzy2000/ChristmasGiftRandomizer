@@ -4,17 +4,14 @@
 /// Each person will get a name a ID number and a matchedID that will later get assigned.
 /// </summary>
 
+#include <string>
 #include "Group.h"
 
 
 int main()
 {
 	Group group;
-	//group.DisplayNames();
-	for (int i = 0; i < group.personVec.size(); i++)
-	{
-		group.personVec[i]->DisplayInfo();
-	}
-
+	group.DisplayGroupInfo();
+	std::cin.get();
 	return 0;
 }
