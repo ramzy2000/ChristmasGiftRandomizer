@@ -18,9 +18,14 @@ int main()
 	{
 		system("cls");
 		Group group;
-		group.DisplayGroupInfo();
-		std::cout << "press enter to try again." << std::endl;
-		std::cin.get();
+		group.DisplayNames();
+		std::cout << "press y to try again or n to close." << std::endl;
+		std::string input;
+		std::cin >> input;
+		if(input == "n")
+		{
+			break;
+		}
 	}
 	return 0;
 }
