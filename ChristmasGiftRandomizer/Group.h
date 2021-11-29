@@ -24,6 +24,8 @@ struct Group
 
 	bool fileIsEmpty = false;
 
+	bool isEven = true;
+
 	/// <summary>
 	/// Holds name of the text file group is reading from
 	/// </summary>
@@ -65,6 +67,13 @@ struct Group
 	/// Display all the names in the group.
 	/// </summary>
 	void DisplayNames();
+
+	bool getRandomGiftMatch();
+
+	///void DisplayMatchNames()
+	///{
+
+	///}
 };
 
 #endif //GROUP_H

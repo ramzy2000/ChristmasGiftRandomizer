@@ -114,3 +114,23 @@ void Group::DisplayNames()
 		std::cout << fileSource << " is empty." << std::endl;
 	}
 }
+
+bool Group::getRandomGiftMatch()
+{
+	bool success = true;
+	if((personVec.size() % 2) == 0 )
+	{
+		isEven = true;
+	}
+	else
+	{
+		isEven = false;
+	}
+
+	if(!isEven)
+	{
+		success = false;
+	}
+
+	return success;
+}
