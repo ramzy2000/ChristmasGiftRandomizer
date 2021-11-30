@@ -10,10 +10,10 @@ void App::AppLoop()
 	while (true)
 	{
 		system("cls");
-		// delete person data
-		appGroup = new Group;
+		appGroup = new Group; // Create group data
 		if (CheckSuccess(*appGroup))
 		{
+			// calculating the random matchup
 			appGroup->DisplayNames();
 		}
 		std::cout << "press y to reload or n to close." << std::endl;
@@ -25,7 +25,7 @@ void App::AppLoop()
 			system("cls");
 			break;
 		}
-		delete appGroup;
+		delete appGroup; // destroy Group data
 	}
 }
 
