@@ -122,6 +122,7 @@ void Group::deletePersonData()
 	for (int i = 0; i < size; i++)
 	{
 		delete personVec[i];
+		personVec[i] = nullptr;
 	}
 }
 

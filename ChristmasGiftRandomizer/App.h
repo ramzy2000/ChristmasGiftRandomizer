@@ -5,7 +5,7 @@
 class App
 {
 public:
-	Group appGroup;
+	Group* appGroup;
 
 	App();
 

@@ -10,18 +10,22 @@ void App::AppLoop()
 	while (true)
 	{
 		system("cls");
-		if (CheckSuccess(appGroup))
+		// delete person data
+		appGroup = new Group;
+		if (CheckSuccess(*appGroup))
 		{
-			appGroup.DisplayNames();
+			appGroup->DisplayNames();
 		}
 		std::cout << "press y to reload or n to close." << std::endl;
 		std::string input;
 		std::cin >> input;
 		if (input == "n")
 		{
+			delete appGroup;
 			system("cls");
 			break;
 		}
+		delete appGroup;
 	}
 }
 
