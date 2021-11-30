@@ -79,8 +79,11 @@ bool Group::evenAmountOfPeople()
 	{
 		std::string line = "";
 		std::getline(file, line);
-		content = line + content;
-		counter++;
+		if(!(line == ""))
+		{
+			content = line + content;
+			counter++;
+		}
 	}
 	file.close();
 	if (counter % 2 == 0)
@@ -100,18 +103,19 @@ bool Group::evenAmountOfPeople()
 void Group::loadPersonData()
 {
 	int counter = 0;
-	std::string content;
 	file.open(fileSource);
 	while (!file.eof())
 	{
 		std::string line = "";
 		std::getline(file, line);
-		content = line + content;
-		Person* personPtr = new Person;
-		personPtr->name = line;
-		counter++;
-		personPtr->ID = counter;
-		personVec.push_back(personPtr);
+		if(!(line == ""))
+		{
+			Person* personPtr = new Person;
+			personPtr->name = line;
+			counter++;
+			personPtr->ID = counter;
+			personVec.push_back(personPtr);
+		}
 	}
 	file.close();
 }
