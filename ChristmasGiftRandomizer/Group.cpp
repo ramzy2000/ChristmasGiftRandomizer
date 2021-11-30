@@ -19,21 +19,6 @@ Group::~Group()
 	deletePersonData();
 }
 
-void Group::DisplayGroupInfo()
-{
-	if (!fileIsEmpty)
-	{
-		for (int i = 0; i < personVec.size(); i++)
-		{
-			personVec[i]->DisplayInfo();
-		}
-	}
-	else
-	{
-		std::cout << fileSource << " is empty." << std::endl;
-	}
-}
-
 void Group::openFile()
 {
 	std::ofstream* fileTemp = new std::ofstream;
@@ -64,6 +49,54 @@ void Group::openFile()
 	file.close();
 }
 
+bool Group::fileIsEmpty()
+{
+	std::string content = "";
+	file.open(fileSource);
+	while (!file.eof())
+	{
+		std::string line = "";
+		std::getline(file, line);
+		content = line + content;
+	}
+	file.close();
+	if (content == "")
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Group::evenAmountOfPeople()
+{
+	std::string content;
+	int counter = 0;
+	file.open(fileSource);
+	while (!file.eof())
+	{
+		std::string line = "";
+		std::getline(file, line);
+		content = line + content;
+		counter++;
+	}
+	file.close();
+	if (counter % 2 == 0)
+	{
+		return true;
+	}
+	else
+	{
+		if (content == "")
+		{
+			return true;
+		}
+		return false;
+	}
+}
+
 void Group::loadPersonData()
 {
 	int counter = 0;
@@ -80,14 +113,6 @@ void Group::loadPersonData()
 		personPtr->ID = counter;
 		personVec.push_back(personPtr);
 	}
-	if (content == "")
-	{
-		fileIsEmpty = true;
-	}
-	else
-	{
-		fileIsEmpty = false;
-	}
 	file.close();
 }
 
@@ -100,37 +125,24 @@ void Group::deletePersonData()
 	}
 }
 
+void Group::DisplayGroupInfo()
+{
+	if (!fileIsEmpty())
+	{
+		for (int i = 0; i < personVec.size(); i++)
+		{
+			personVec[i]->DisplayInfo();
+		}
+	}
+}
+
 void Group::DisplayNames()
 {
-	if (!fileIsEmpty)
+	if (!fileIsEmpty())
 	{
 		for (Person* element : personVec)
 		{
 			std::cout << element->name << std::endl;
 		}
 	}
-	else
-	{
-		std::cout << fileSource << " is empty." << std::endl;
-	}
-}
-
-bool Group::getRandomGiftMatch()
-{
-	bool success = true;
-	if((personVec.size() % 2) == 0 )
-	{
-		isEven = true;
-	}
-	else
-	{
-		isEven = false;
-	}
-
-	if(!isEven)
-	{
-		success = false;
-	}
-
-	return success;
 }

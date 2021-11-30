@@ -22,10 +22,6 @@ struct Group
 	/// </summary>
 	std::fstream file;
 
-	bool fileIsEmpty = false;
-
-	bool isEven = true;
-
 	/// <summary>
 	/// Holds name of the text file group is reading from
 	/// </summary>
@@ -44,14 +40,19 @@ struct Group
 	~Group();
 
 	/// <summary>
-	/// Displays the the groups IDs and matchedIDs along side the names.
-	/// </summary>
-	void DisplayGroupInfo();
-
-	/// <summary>
 	/// Check if we can open the file.
 	/// </summary>
 	void openFile();
+
+	/// <summary>
+	/// Checks if file is empty and returns true or false.
+	/// </summary>
+	bool fileIsEmpty();
+
+	/// <summary>
+	/// checks to see if the text document has a even number of people.
+	/// </summary>
+	bool evenAmountOfPeople();
 
 	/// <summary>
 	/// Load all the person data from the text file.
@@ -64,16 +65,14 @@ struct Group
 	void deletePersonData();
 
 	/// <summary>
+	/// Displays the the groups IDs and matchedIDs along side the names.
+	/// </summary>
+	void DisplayGroupInfo();
+
+	/// <summary>
 	/// Display all the names in the group.
 	/// </summary>
 	void DisplayNames();
-
-	bool getRandomGiftMatch();
-
-	///void DisplayMatchNames()
-	///{
-
-	///}
 };
 
 #endif //GROUP_H
