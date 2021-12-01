@@ -4,7 +4,7 @@ Group::Group()
 {
 	fileSource = "names.txt";
 	openFile();
-	loadPersonData2();
+	loadPersonData();
 }
 
 Group::Group(std::string file)
@@ -100,7 +100,7 @@ bool Group::evenAmountOfPeople()
 	}
 }
 
-void Group::loadPersonData2()
+void Group::loadPersonData2() // test to load with comma to add a flagging perameter
 {
 	int counter = 0;
 	file.open(fileSource);
