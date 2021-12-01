@@ -117,6 +117,12 @@ void Group::loadPersonData()
 			personVec.push_back(personPtr);
 		}
 	}
+
+	// every person flags themselves.
+	for (int i = 0; i < counter; i++)
+	{
+		personVec[i]->flagSelfID(personVec[i]->ID);
+	}
 	file.close();
 }
 

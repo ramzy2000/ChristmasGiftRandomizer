@@ -14,7 +14,7 @@ void App::AppLoop()
 		if (CheckSuccess(*appGroup))
 		{
 			// calculating the random matchup
-			appGroup->DisplayNames();
+			appGroup->DisplayGroupInfo();
 		}
 		std::cout << "press y to reload or n to close." << std::endl;
 		std::string input;
