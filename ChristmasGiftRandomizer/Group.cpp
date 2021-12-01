@@ -4,7 +4,7 @@ Group::Group()
 {
 	fileSource = "names.txt";
 	openFile();
-	loadPersonData();
+	loadPersonData2();
 }
 
 Group::Group(std::string file)
