@@ -5,6 +5,7 @@
 #include <vector>
 #include <fstream>
 #include "Person.h"
+//#define DEBUG
 
 /// <summary>
 /// Holds a dynamic list of Person data types and can perform operations on them.
