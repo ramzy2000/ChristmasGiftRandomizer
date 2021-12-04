@@ -100,68 +100,6 @@ bool Group::evenAmountOfPeople()
 	}
 }
 
-void Group::loadPersonData2() // test to load with comma to add a flagging perameter
-{
-	int counter = 0;
-	file.open(fileSource);
-	while (!file.eof())
-	{
-		std::string line = "";
-		std::getline(file, line);
-
-		if (line.find(',') != std::string::npos)
-		{
-			std::cout << "found comma" << std::endl;
-			if (line.find(' ') != std::string::npos)
-			{
-				std::size_t size = line.find(' ');
-				std::cout << "space found" << std::endl;
-				std::string str = "";
-				for (int i = size+1; i < line.size(); i++)
-				{
-					str = str + line.at(i);
-				}
-
-				for (int i = 0; i < personVec.size(); i++)
-				{
-					if (str == personVec[i]->name)
-					{
-						personVec[i]->flagIDs(*personVec[i]);
-					}
-				}
-			}
-			if (!(line.find(' ') != std::string::npos))
-			{
-				std::size_t size = line.find(',');
-				std::string str = "";
-				for (int i = size+1; i < line.size(); i++)
-				{
-					str = str + line.at(i);
-				}
-
-				std::cout << str << std::endl;
-			}
-		}
-
-		if (!(line == ""))
-		{
-			Person* personPtr = new Person;
-			personPtr->name = line;
-			counter++;
-			personPtr->ID = counter;
-			personVec.push_back(personPtr);
-		}
-	}
-
-	file.close();
-
-	// every person flags themselves.
-	for (int i = 0; i < counter; i++)
-	{
-		personVec[i]->flagSelfID(personVec[i]->ID);
-	}
-}
-
 void Group::loadPersonData()
 {
 	int counter = 0;
