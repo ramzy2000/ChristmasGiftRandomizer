@@ -1,17 +1,5 @@
 #include "Group.h"
 
-std::string getStringToLeftOfComma(const std::string& str)
-{
-	std::string res = "";
-	std::size_t sizeUpToComma = str.find(',');
-	for (std::size_t i = 0; i < sizeUpToComma; i++)
-	{
-		char charBuffer = str.at(i);
-		res = res + charBuffer;
-	}
-	return res;
-}
-
 Group::Group()
 {
 	fileSource = "names.txt";
@@ -134,9 +122,6 @@ void Group::loadPersonData()
 
 			if (lineHasComma)
 			{
-				std::size_t sizeUpToComma = line.find(','); // get the element of the comma
-				std::size_t sizeOfLine = line.size(); // get the size of the over all string
-
 				// Replace line string with the data on the left of the comma.
 				line = getStringToLeftOfComma(line);
 			}

@@ -5,6 +5,7 @@
 #include <vector>
 #include <fstream>
 #include "Person.h"
+#include "DocumentTools.h"
 //#define DEBUG
 
 /// <summary>
