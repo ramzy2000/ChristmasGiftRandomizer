@@ -39,6 +39,7 @@ struct Group
 	/// </summary>
 	Group(std::string file);
 
+	/// Destructor
 	~Group();
 
 	/// <summary>
@@ -61,7 +62,15 @@ struct Group
 	/// </summary>
 	void loadPersonData();
 
+	/// <summary>
+	/// Load all of the flagging data into the person data.
+	/// </summary>
 	void loadFlagData();
+
+	/// <summary>
+	/// Check the string flags against person name to flag person id.
+	/// </summary>
+	void checkFlagsAgainstPersonVecAndIDFlag();
 
 	/// <summary>
 	/// Delete all of the person data.

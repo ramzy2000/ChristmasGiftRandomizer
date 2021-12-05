@@ -143,13 +143,14 @@ void Group::loadPersonData()
 void Group::loadFlagData()
 {
 	// open the file
-	int counter = 0;
-	file.open(fileSource);
+	int amountOfLines = 0; // count the amount of lines
+	file.open(fileSource); // open file
 
+	// itterate through the whole file.
 	while (!file.eof())
 	{
-		std::string line = "";
-		std::getline(file, line);
+		std::string line = "";// create string storage for the current line.
+		std::getline(file, line); // fill the storage
 		bool lineIsEmpty = line == "";
 		bool lineHasComma = line.find(',') != std::string::npos;
 		bool lineHasSpace = line.find(' ') != std::string::npos;
@@ -160,22 +161,50 @@ void Group::loadFlagData()
 			// if line has comma and space
 			if (lineHasComma && lineHasSpace)
 			{
+				// ignore the right side of the comma.
+				// store it in the line string
 				line = getStringToRightOfCommaWs(line);
+
+				// load the current person's sting vector with a name flag.
+				personVec[amountOfLines]->strVector.push_back(line);
 			}
+			// if the line only has a comma.
 			else
 			{
 				if (lineHasComma)
 				{
 					line = getStringToRightOfComma(line);
+					personVec[amountOfLines]->strVector.push_back(line);
 				}
 			}
-			personVec[counter]->strVector.push_back(line);
-			counter++;
+			amountOfLines++;
 		}
 	}
 
 	// close the file
 	file.close();
+}
+
+void Group::checkFlagsAgainstPersonVecAndIDFlag()
+{
+	// itteraing along personVec
+	for (Person* person : personVec)
+	{
+		// get the size of the current string vector of the current person.
+		std::size_t stringVectorSize = person->strVector.size();
+
+		// itterate along current string vector.
+		for (std::size_t i = 0; i < stringVectorSize; i++)
+		{
+#ifdef DEBUG
+			// if the current person name is equal to the current itterated string.
+			if (person->name == person->strVector[i])
+			{
+				person->ID
+			}
+#endif //DEBUG
+		}
+	}
 }
 
 void Group::deletePersonData()
