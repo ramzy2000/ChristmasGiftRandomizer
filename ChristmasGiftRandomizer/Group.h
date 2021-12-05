@@ -56,12 +56,12 @@ struct Group
 	/// </summary>
 	bool evenAmountOfPeople();
 
-	void loadPersonData2();
-
 	/// <summary>
 	/// Load all the person data from the text file.
 	/// </summary>
 	void loadPersonData();
+
+	void loadFlagData();
 
 	/// <summary>
 	/// Delete all of the person data.

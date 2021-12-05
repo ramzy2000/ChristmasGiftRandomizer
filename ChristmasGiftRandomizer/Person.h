@@ -18,6 +18,8 @@ public:
 
 	std::vector<int> flagsVector;
 
+	std::vector<std::string> strVector;
+
 	/// <summary>
 	/// unique ID used in identifying a person besides the string name.
 	/// </summary>
@@ -48,6 +50,8 @@ public:
 	void DisplayInfo();
 
 	void DisplayFlags();
+
+	void DisplayFlagNames();
 };
 
 #endif // PERSON_H

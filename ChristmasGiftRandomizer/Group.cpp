@@ -5,6 +5,7 @@ Group::Group()
 	fileSource = "names.txt";
 	openFile();
 	loadPersonData();
+	loadFlagData();
 }
 
 Group::Group(std::string file)
@@ -12,6 +13,7 @@ Group::Group(std::string file)
 	fileSource = file;
 	openFile();
 	loadPersonData();
+	loadFlagData();
 }
 
 Group::~Group()
@@ -136,6 +138,44 @@ void Group::loadPersonData()
 	}
 
 	file.close(); // close the file.
+}
+
+void Group::loadFlagData()
+{
+	// open the file
+	int counter = 0;
+	file.open(fileSource);
+
+	while (!file.eof())
+	{
+		std::string line = "";
+		std::getline(file, line);
+		bool lineIsEmpty = line == "";
+		bool lineHasComma = line.find(',') != std::string::npos;
+		bool lineHasSpace = line.find(' ') != std::string::npos;
+
+		// if the line is not empty then we want to check for perameters
+		if (!lineIsEmpty)
+		{
+			// if line has comma and space
+			if (lineHasComma && lineHasSpace)
+			{
+				line = getStringToRightOfCommaWs(line);
+			}
+			else
+			{
+				if (lineHasComma)
+				{
+					line = getStringToRightOfComma(line);
+				}
+			}
+			personVec[counter]->strVector.push_back(line);
+			counter++;
+		}
+	}
+
+	// close the file
+	file.close();
 }
 
 void Group::deletePersonData()

@@ -33,6 +33,9 @@ void Person::DisplayInfo()
 	std::cout << "flagedIDs: ";
 	DisplayFlags();
 	std::cout << std::endl;
+	std::cout << "flagedNames: ";
+	DisplayFlagNames();
+	std::cout << std::endl;
 }
 
 void Person::DisplayFlags()
@@ -52,5 +55,18 @@ void Person::DisplayFlags()
 	else
 	{
 		std::cout << "none";
+	}
+}
+
+void Person::DisplayFlagNames()
+{
+	std::size_t size = strVector.size();
+	for (std::size_t i = 0; i < size; i++)
+	{
+		std::cout << strVector[i];
+		if (!(size - 1 == i))
+		{
+			std::cout << ", ";
+		}
 	}
 }
