@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+    <script src="./node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="./node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
+    <link rel="stylesheet" href="./main.css"> <!--Custom Bootstrap scss-->
+    <link rel="stylesheet" href="./styles/styles.css">
+    <script src="./scripts/index.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <!--
+        Landing page div
+        By default the this div is displaying
+    -->
+    <div id="landing-page" class="landing-page container border border-dark rounded">
+        <h1 class="text-center">Christmas Gift Exchange Generator</h1>
+        <b>
+            <p>
+                <h4>Welcome to the Christmas Gift Exchange Generator 1.0</h4>
+                <ol>
+                    <li>Enter the number of participants</li>
+                    <li>Make sure that you enter a even number of participants it cannot be odd.</li>
+                </ol>
+            </p>
+        </b>
+        <form>
+            <p><input id="participants" style="font-size: 20pt;" class="form-control" type="number" name="participants" min=1 max=100 oninput="validity.valid||(value='');"></p>
+            <p style="margin-bottom: 0px;"><input id="participants-submit" class="btn btn-primary" type="button" value="Submit"></p>
+        </form>
+        <!--
+            This is the warning div that the landing page uses
+        -->
+        <div id="warning-box" style="display: none;" class="landing-page container border border-dark rounded p-3 mb-2 bg-warning text-dark">
+            <h2 id="warning-message"></h2>
+        </div>
+    </div>
+
+    <!--
+        Page that will hold the text boxes so the user can enter the names
+    -->
+    <div id="main-content" class="main-content container text-center p-4">
+        <form id="name-entry-form" action="javascript:void(0)">
+            
+        </form>
+    </div>
+</body>
+</html>

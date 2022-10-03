@@ -1,0 +1,16 @@
+{
+  "name": "cover",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^5.2.1",
+    "jquerry": "^0.0.1-security",
+    "jquery": "^3.6.1"
+  }
+}
