@@ -17,7 +17,9 @@ $(function () {
             []
         ]
 
-        namesAlreadyMatched
+        namesAlreadyMatched = new Set();
+
+        namesWithNoFlag = new Set();
 
         App() {
             $("#main-content").hide(); // hide the other usable div
@@ -56,70 +58,93 @@ $(function () {
                 temp0 = name0 + i;
                 temp1 = name1 + i;
 
-                //class="m-2"
-
                 let tempStr0 = `<td><input id="${temp0}" name="${temp0}" style="font-size: 20pt;" value="" type="text"></td>`;
                 let tempStr1 = `<td><input id="${temp1}" name="${temp1}" style="font-size: 20pt;" value="" type="text"></td>`;
-
                 let tempStrFinal = "<tr>" + tempStr0 + tempStr1 + "</tr>";
-
                 $("#name-table").append(tempStrFinal);
             }
 
             $("#name-entry-form").append(`</table>`);
-
             $("#name-entry-form").append(`<input id="name-entry-submit" type="button" value="Submit">`);
-
             $("#name-entry-submit").on("click", function () {
                 app.submitMainContent();
             });
         }
 
         submitMainContent() {
-            // after clicking submit button on the main-content
-            // load the name0 and name1 values into a multi dimensional array [name, flagName]
+            // stores the [nameEntry][nameFlag] loaded form the form.
+            this.nameData = [
+                [],
+                []
+            ];
+    
+            // stores the [name][nameMatch] after the process is complete
+            this.randomNameData = [
+                [],
+                []
+            ]
 
+            // holds all names already 
+            this.namesAlreadyMatched = new Set();
+
+            this.namesWithNoFlag = new Set();
+
+            // load the nameData multidimentinal array from generated the input forms
             for (let i = 0; i < this.numberOfPart; i++) {
-                // get the name and flagName input tags values at the current index and load into array
                 let temp0 = "name0:";
                 temp0 = temp0 + i;
-                //temp0 = "#" + temp0;
                 let name = document.getElementById(temp0).value;
 
                 let temp1 = "name1:";
                 temp1 = temp1 + i;
-                //temp1 = "#" + temp1;
                 let flagName = document.getElementById(temp1).value;
 
                 this.nameData[0][i] = name;
                 this.nameData[1][i] = flagName;
             }
 
-            // loop through each name with its flag
+            // load the randomNameData multidimentinal array by looping through all names entered
+            // from the first index to the last randomly generate a number between the amount of available indexs. 
+            // If the name is equal to the the name at the index from the random number or If the current flag name
+            // is equal to the name at the index of the random number or If the current flag name is already in the name set object
+            // then regenerate the number and check again if anything else store the name entered and the name matched.
+
             for (let i = 0; i < this.numberOfPart; i++) {
-                //console.log(this.nameData[0][i] + " " + this.nameData[1][i]); // iterate through the arrays
+                if (this.nameData[1][i] == "") {
+                    this.namesWithNoFlag.add(this.nameData[0][i]);
+                }
+            }
 
-                // generate a random number for this name entry from 0 to this.numberOfPart-1
+            for (let i = 0; i < this.numberOfPart; i++) {
+                let currName = this.nameData[0][i]; // current entry name at the current index
+                let currFlag = this.nameData[1][i]; // current flag name at the current index
+                let randomNameFinal = ""; // will store the final resulting name that was randomly selected
 
-                // loop through all names and check the matching index of the random index
-                // if the name at the index is equal to the name matching regenerate the number
-
+                // keep generating the number for the current index until the critera is met
                 while (true) {
                     let randomNum = randomIntFromInterval(0, this.numberOfPart - 1); // generate the random numberOfChecks
+                    let randomName = this.nameData[0][randomNum]; // get the name at the index of the random number
 
-                    // check if the random number generated name is not matching your name or the flag nameData
-
-                    if (nameData[0][i] == nameData[0][randomNum]) {
-                        continue;
-                    } else if (nameData[1][i] == nameData[0][randomNum]) {
-                        continue;
+                    if (currFlag !== "") {
+                        if (currName == randomName || currFlag == randomName || this.namesAlreadyMatched.has(randomName)) {
+                            continue
+                        } else {
+                            randomNameFinal = this.nameData[0][randomNum];
+                            break;
+                        }
                     } else {
-                        break;
+                        if (currName == randomName || this.namesAlreadyMatched.has(randomName) || this.namesWithNoFlag.has(randomName)) {
+                            continue
+                        } else {
+                            randomNameFinal = this.nameData[0][randomNum];
+                            break;
+                        }
                     }
                 }
 
-                randomNameData[0][i] = nameData[0][i]; // [Grifter, recipient]
-                randomNameData[1][i] = nameData[0][randomNum];
+                this.namesAlreadyMatched.add(randomNameFinal); // add the matched name to the set
+                this.randomNameData[0][i] = this.nameData[0][i]; // store the entry name
+                this.randomNameData[1][i] = randomNameFinal; // store the matched name
             }
 
             // print out results
