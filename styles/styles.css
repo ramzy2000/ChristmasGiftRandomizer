@@ -22,6 +22,13 @@ body{
     background-color: rgba(252, 248, 232, 0.9);
 }
 
+#result-table {
+    display: table;
+    text-align: left;
+    font-family: Helvetica;
+    font-size: 30pt;
+}
+
 #landing-page {
     font-size: 13pt;
 }
