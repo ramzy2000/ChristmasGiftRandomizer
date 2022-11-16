@@ -36,6 +36,10 @@ $(function () {
 
         finalIndex = 0;
 
+        regen = true;
+        isNames = true;
+        isRepeatingNames = false;
+
         App() {
             $("#main-content").hide(); // hide the other usable div
             $("#result-content").hide();
@@ -87,14 +91,13 @@ $(function () {
             });
         }
 
-        submitMainContent() {
+        genRandomNumbers() {
+            this.regen = true;
+            this.isNames = true;
+            this.isRepeatingNames = false;
 
-            let regen = true;
-            let isNames = true;
-            let isRepeatingNames = false;
-
-            while (regen) {
-                regen = false;
+            while (this.regen) {
+                this.regen = false;
                 // stores the [nameEntry][nameFlag] loaded form the form.
                 this.nameData = [
                     [],
@@ -141,18 +144,18 @@ $(function () {
                 // check if the names have text in them
                 for (let i = 0; i < this.numberOfPart; i++) {
                     if (this.nameData[0][i] === "") {
-                        isNames = false;
+                        this.isNames = false;
                     }
                 }
 
                 // check if the any names are repeating
                 let tempSet = new Set();
-                for(let i = 0; i < this.numberOfPart; i++) {
-                    if(!tempSet.has(this.nameData[0][i])) {
+                for (let i = 0; i < this.numberOfPart; i++) {
+                    if (!tempSet.has(this.nameData[0][i])) {
                         tempSet.add(this.nameData[0][i]);
                     } else {
                         console.log("Error no repeating names");
-                        isRepeatingNames = true;
+                        this.isRepeatingNames = true;
                     }
                 }
 
@@ -169,7 +172,7 @@ $(function () {
 
                 // load all names that have a flag into an array with there flags and process them first
 
-                if (isNames || !isRepeatingNames) {
+                if (this.isNames && !this.isRepeatingNames) {
                     for (let i = 0; i < this.numberOfPart; i++) {
                         if (this.nameData[1][i] !== "") {
                             this.namesWithFlags[0][this.namesWithFlagsCount] = this.nameData[0][i];
@@ -192,7 +195,7 @@ $(function () {
                         let currFlag = this.namesWithFlags[1][i]; // current flag name at the current index
                         let randomNameFinal = ""; // will store the final resulting name that was randomly selected
 
-                        while (!regen) {
+                        while (!this.regen) {
                             let randomNum = randomIntFromInterval(0, this.numberOfPart - 1); // generate the index
                             let randomName = this.nameData[0][randomNum];
 
@@ -215,13 +218,13 @@ $(function () {
                         let currName = this.namesWithNoFlag[i]; // current entry name at the current index
                         let randomNameFinal = ""; // will store the final resulting name that was randomly selected
 
-                        while (!regen) {
+                        while (!this.regen) {
                             let randomNum = randomIntFromInterval(0, this.numberOfPart - 1); // generate the index
                             let randomName = this.nameData[0][randomNum];
 
                             if (currName == randomName || this.namesAlreadyMatched.has(randomName)) {
                                 if (this.namesAlreadyMatched.size === this.numberOfPart - 1) {
-                                    regen = true;
+                                    this.regen = true;
                                     break;
                                 }
                                 continue;
@@ -237,7 +240,7 @@ $(function () {
                         this.finalIndex++;
                     }
 
-                    if (!regen) {
+                    if (!this.regen) {
                         // print out results
                         for (let i = 0; i < this.finalIndex; i++) {
                             console.log(this.randomNameData[0][i] + " " + this.randomNameData[1][i]); // iterate through the arrays
@@ -248,30 +251,41 @@ $(function () {
                 }
             }
 
-            // hide the main content div tag
-            $("#main-content").hide();
+            if (!this.isRepeatingNames && this.isNames) {
+                // hide the main content div tag
+                $("#main-content").hide();
 
-            // show the result-page div tag
-            $("#result-content").show();
+                // show the result-page div tag
+                $("#result-content").show();
 
-            // generate the resulting page
-            for(let i = 0; i < this.finalIndex; i++) {
-                $("#result-table").append(`<tr><td>${this.randomNameData[0][i]}</td><td>${this.randomNameData[1][i]}</td></tr>`);
+                // generate the resulting page
+                for (let i = 0; i < this.finalIndex; i++) {
+                    $("#result-table").append(`<tr><td>${this.randomNameData[0][i]}</td><td>${this.randomNameData[1][i]}</td></tr>`);
+                }
+
+                // add the retry button
+                $("#result-table").append(`<button id="retry-btn">Retry</button>`);
             }
+        }
 
-            // add the retry button
-            $("#result-table").append(`<button id="retry-btn">Retry</button>`);
+        submitMainContent() {
+            do {
+                this.genRandomNumbers();
 
-            $("#retry-btn").on("click", function() {
-                // hide the result content
-                $("#result-content").hide();
+                if (!this.isRepeatingNames && this.isNames) {
+                    $("#retry-btn").on("click", function () {
+                        // hide the result content
+                        $("#result-content").hide();
 
-                // drop the table contents
-                $("#result-table").empty();
+                        // drop the table contents
+                        $("#result-table").empty();
 
-                // show the main content
-                $("#main-content").show();
-            })
+                        // show the main content
+                        $("#main-content").show();
+                    });
+                    break;
+                }
+            } while(true);
         }
     };
 
