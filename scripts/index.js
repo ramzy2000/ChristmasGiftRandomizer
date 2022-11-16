@@ -14,7 +14,7 @@ $(function () {
 
         namesWithFlags = [
             [], // name entry
-            []  // name flag
+            [] // name flag
         ];
 
         namesWithFlagsCount = 0;
@@ -87,159 +87,137 @@ $(function () {
         }
 
         submitMainContent() {
-            // stores the [nameEntry][nameFlag] loaded form the form.
-            this.nameData = [
-                [],
-                []
-            ];
 
-            this.namesWithFlags = [
-                [], // name entry
-                []  // name flag
-            ];
-    
-            this.namesWithFlagsCount = 0;
-    
-            // stores the [name][nameMatch] after the process is complete
-            this.randomNameData = [
-                [],
-                []
-            ];
+            let regen = true;
+            while (regen) {
+                regen = false;
+                // stores the [nameEntry][nameFlag] loaded form the form.
+                this.nameData = [
+                    [],
+                    []
+                ];
 
-            // holds all names already 
-            this.namesAlreadyMatched = new Set();
+                this.namesWithFlags = [
+                    [], // name entry
+                    [] // name flag
+                ];
 
-            this.namesWithNoFlag = [];
+                this.namesWithFlagsCount = 0;
 
-            this.namesWithNoFlagCount = 0;
+                // stores the [name][nameMatch] after the process is complete
+                this.randomNameData = [
+                    [],
+                    []
+                ];
 
-            this.finalIndex = 0;
+                // holds all names already 
+                this.namesAlreadyMatched = new Set();
 
-            // load the nameData multidimentinal array from generated the input forms
-            for (let i = 0; i < this.numberOfPart; i++) {
-                let temp0 = "name0:";
-                temp0 = temp0 + i;
-                let name = document.getElementById(temp0).value;
+                this.namesWithNoFlag = [];
 
-                let temp1 = "name1:";
-                temp1 = temp1 + i;
-                let flagName = document.getElementById(temp1).value;
+                this.namesWithNoFlagCount = 0;
 
-                this.nameData[0][i] = name;
-                this.nameData[1][i] = flagName;
-            }
+                this.finalIndex = 0;
 
-            // load the randomNameData multidimentinal array by looping through all names entered
-            // from the first index to the last randomly generate a number between the amount of available indexs. 
-            // If the name is equal to the the name at the index from the random number or If the current flag name
-            // is equal to the name at the index of the random number or If the current flag name is already in the name set object
-            // then regenerate the number and check again if anything else store the name entered and the name matched.
+                // load the nameData multidimentinal array from generated the input forms
+                for (let i = 0; i < this.numberOfPart; i++) {
+                    let temp0 = "name0:";
+                    temp0 = temp0 + i;
+                    let name = document.getElementById(temp0).value;
 
+                    let temp1 = "name1:";
+                    temp1 = temp1 + i;
+                    let flagName = document.getElementById(temp1).value;
 
-            // check if all of the name entry text boxes are empty
-            // if so do not process the names and send a alert to user saying please
-            // make sure to fill in all name entry fields.
-
-            // load all names that have a flag into an array with there flags and process them first
-            for (let i = 0; i < this.numberOfPart; i++) {
-                if(this.nameData[1][i] !== "") {
-                    this.namesWithFlags[0][this.namesWithFlagsCount] = this.nameData[0][i];
-                    this.namesWithFlags[1][this.namesWithFlagsCount] = this.nameData[1][i];
-                    this.namesWithFlagsCount++;
+                    this.nameData[0][i] = name;
+                    this.nameData[1][i] = flagName;
                 }
-            }
 
-            // load all names that don't have a flag
-            for (let i = 0; i < this.numberOfPart; i++) {
-                if(this.nameData[1][i] === "") {
-                    this.namesWithNoFlag[this.namesWithNoFlagCount] = this.nameData[0][i];
-                    this.namesWithNoFlagCount++;
-                }
-            }
+                // load the randomNameData multidimentinal array by looping through all names entered
+                // from the first index to the last randomly generate a number between the amount of available indexs. 
+                // If the name is equal to the the name at the index from the random number or If the current flag name
+                // is equal to the name at the index of the random number or If the current flag name is already in the name set object
+                // then regenerate the number and check again if anything else store the name entered and the name matched.
 
-            // process the names with flags against all of the names first
-            for (let i = 0; i < this.namesWithFlagsCount; i++) {
-                let currName = this.namesWithFlags[0][i]; // current entry name at the current index
-                let currFlag = this.namesWithFlags[1][i]; // current flag name at the current index
-                let randomNameFinal = ""; // will store the final resulting name that was randomly selected
 
-                while(true) {
-                    let randomNum = randomIntFromInterval(0, this.numberOfPart-1); // generate the index
-                    let randomName = this.nameData[0][randomNum];
+                // check if all of the name entry text boxes are empty
+                // if so do not process the names and send a alert to user saying please
+                // make sure to fill in all name entry fields.
 
-                    if(currName == randomName || currFlag == randomName || this.namesAlreadyMatched.has(randomName)) {
-                        continue;
-                    } else {
-                        randomNameFinal = this.nameData[0][randomNum];
-                        break;
+                // load all names that have a flag into an array with there flags and process them first
+                for (let i = 0; i < this.numberOfPart; i++) {
+                    if (this.nameData[1][i] !== "") {
+                        this.namesWithFlags[0][this.namesWithFlagsCount] = this.nameData[0][i];
+                        this.namesWithFlags[1][this.namesWithFlagsCount] = this.nameData[1][i];
+                        this.namesWithFlagsCount++;
                     }
                 }
 
-                this.namesAlreadyMatched.add(randomNameFinal); // add the matched name to the set
-                this.randomNameData[0][this.finalIndex] = currName; // store the entry name
-                this.randomNameData[1][this.finalIndex] = randomNameFinal; // store the matched name
-                this.finalIndex++;
-            }
-
-            // then process the names without flags
-            for (let i = 0; i < this.namesWithNoFlagCount; i++) {
-                let currName = this.namesWithNoFlag[i]; // current entry name at the current index
-                let randomNameFinal = ""; // will store the final resulting name that was randomly selected
-
-                while(true) {
-                    let randomNum = randomIntFromInterval(0, this.numberOfPart-1); // generate the index
-                    let randomName = this.nameData[0][randomNum];
-
-                    if(currName == randomName ||  this.namesAlreadyMatched.has(randomName)) {
-                        continue;
-                    } else {
-                        randomNameFinal = this.nameData[0][randomNum];
-                        break;
+                // load all names that don't have a flag
+                for (let i = 0; i < this.numberOfPart; i++) {
+                    if (this.nameData[1][i] === "") {
+                        this.namesWithNoFlag[this.namesWithNoFlagCount] = this.nameData[0][i];
+                        this.namesWithNoFlagCount++;
                     }
                 }
 
-                this.namesAlreadyMatched.add(randomNameFinal); // add the matched name to the set
-                this.randomNameData[0][this.finalIndex] = currName; // store the entry name
-                this.randomNameData[1][this.finalIndex] = randomNameFinal; // store the matched name
-                this.finalIndex++;
-            }
+                // process the names with flags against all of the names first
+                for (let i = 0; i < this.namesWithFlagsCount; i++) {
+                    let currName = this.namesWithFlags[0][i]; // current entry name at the current index
+                    let currFlag = this.namesWithFlags[1][i]; // current flag name at the current index
+                    let randomNameFinal = ""; // will store the final resulting name that was randomly selected
 
+                    while (!regen) {
+                        let randomNum = randomIntFromInterval(0, this.numberOfPart - 1); // generate the index
+                        let randomName = this.nameData[0][randomNum];
 
-            /*for (let i = 0; i < this.numberOfPart; i++) {
-                let currName = this.nameData[0][i]; // current entry name at the current index
-                let currFlag = this.nameData[1][i]; // current flag name at the current index
-                let randomNameFinal = ""; // will store the final resulting name that was randomly selected
-
-                // keep generating the number for the current index until the critera is met
-                while (true) {
-                    let randomNum = randomIntFromInterval(0, this.numberOfPart - 1); // generate the random numberOfChecks
-                    let randomName = this.nameData[0][randomNum]; // get the name at the index of the random number
-
-                    if (currFlag !== "") {
-                        if (currName == randomName || currFlag == randomName || this.namesAlreadyMatched.has(randomName)) {
-                            continue
-                        } else {
-                            randomNameFinal = this.nameData[0][randomNum];
-                            break;
-                        }
-                    } else {
-                        if (currName == randomName || this.namesAlreadyMatched.has(randomName) || this.namesWithNoFlag.has(randomName)) {
-                            continue
+                        if (currName == randomName || currFlag === randomName || this.namesAlreadyMatched.has(randomName)) {
+                            continue;
                         } else {
                             randomNameFinal = this.nameData[0][randomNum];
                             break;
                         }
                     }
+
+                    this.namesAlreadyMatched.add(randomNameFinal); // add the matched name to the set
+                    this.randomNameData[0][this.finalIndex] = currName; // store the entry name
+                    this.randomNameData[1][this.finalIndex] = randomNameFinal; // store the matched name
+                    this.finalIndex++;
                 }
 
-                this.namesAlreadyMatched.add(randomNameFinal); // add the matched name to the set
-                this.randomNameData[0][i] = this.nameData[0][i]; // store the entry name
-                this.randomNameData[1][i] = randomNameFinal; // store the matched name
-            }*/
+                // then process the names without flags
+                for (let i = 0; i < this.namesWithNoFlagCount; i++) {
+                    let currName = this.namesWithNoFlag[i]; // current entry name at the current index
+                    let randomNameFinal = ""; // will store the final resulting name that was randomly selected
 
-            // print out results
-            for (let i = 0; i < this.finalIndex; i++) {
-                console.log(this.randomNameData[0][i] + " " + this.randomNameData[1][i]); // iterate through the arrays
+                    while (!regen) {
+                        let randomNum = randomIntFromInterval(0, this.numberOfPart - 1); // generate the index
+                        let randomName = this.nameData[0][randomNum];
+
+                        if (currName == randomName || this.namesAlreadyMatched.has(randomName)) {
+                            if (this.namesAlreadyMatched.size === this.numberOfPart - 1) {
+                                regen = true;
+                                break;
+                            }
+                            continue;
+                        } else {
+                            randomNameFinal = this.nameData[0][randomNum];
+                            break;
+                        }
+                    }
+
+                    this.namesAlreadyMatched.add(randomNameFinal); // add the matched name to the set
+                    this.randomNameData[0][this.finalIndex] = currName; // store the entry name
+                    this.randomNameData[1][this.finalIndex] = randomNameFinal; // store the matched name
+                    this.finalIndex++;
+                }
+
+                if (!regen) {
+                    // print out results
+                    for (let i = 0; i < this.finalIndex; i++) {
+                        console.log(this.randomNameData[0][i] + " " + this.randomNameData[1][i]); // iterate through the arrays
+                    }
+                }
             }
         }
     };
