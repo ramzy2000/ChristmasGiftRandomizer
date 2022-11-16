@@ -135,6 +135,11 @@ $(function () {
             // is equal to the name at the index of the random number or If the current flag name is already in the name set object
             // then regenerate the number and check again if anything else store the name entered and the name matched.
 
+
+            // check if all of the name entry text boxes are empty
+            // if so do not process the names and send a alert to user saying please
+            // make sure to fill in all name entry fields.
+
             // load all names that have a flag into an array with there flags and process them first
             for (let i = 0; i < this.numberOfPart; i++) {
                 if(this.nameData[1][i] !== "") {
