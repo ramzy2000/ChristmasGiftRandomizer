@@ -1,0 +1,77 @@
+@model ChristmasGiftRandomizer.ViewModels.GroupDetailsViewModel
+@{
+    ViewData["Title"] = "Group Details";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>@Model.Group.Name</h2>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Group.Id" class="btn btn-secondary">Edit Group</a>
+        <a asp-action="AddParticipant" asp-route-groupId="@Model.Group.Id" class="btn btn-primary">Add Participant</a>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.Group.Description))
+{
+    <p class="text-muted mb-4">@Model.Group.Description</p>
+}
+
+<h4>Participants (@Model.Participants.Count)</h4>
+
+@if (Model.Participants.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Restrictions</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var participant in Model.Participants)
+                {
+                    <tr>
+                        <td>@participant.Name</td>
+                        <td>@participant.Email</td>
+                        <td>
+                            @if (participant.RestrictedParticipantIds.Any())
+                            {
+                                var restrictedNames = Model.Participants
+                                    .Where(p => participant.RestrictedParticipantIds.Contains(p.Id ?? Guid.Empty))
+                                    .Select(p => p.Name);
+                                <span class="badge bg-warning">@string.Join(", ", restrictedNames)</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">None</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="EditParticipant" asp-route-id="@participant.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <form asp-action="DeleteParticipant" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@participant.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                        onclick="return confirm('Are you sure you want to delete this participant?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <p>No participants yet. Add your first participant to get started!</p>
+        <a asp-action="AddParticipant" asp-route-groupId="@Model.Group.Id" class="btn btn-primary">Add Participant</a>
+    </div>
+}
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-secondary">Back to Groups</a>
+</div>
+

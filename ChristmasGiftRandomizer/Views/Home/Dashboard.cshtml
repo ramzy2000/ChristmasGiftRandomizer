@@ -1,0 +1,127 @@
+@model ChristmasGiftRandomizer.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Dashboard</h2>
+    <div>
+        <a asp-controller="Groups" asp-action="Create" class="btn" style="background-color: #DF7861; color: white;">Create Group</a>
+        <a asp-controller="Exchanges" asp-action="Create" class="btn btn-outline-secondary">Start Exchange</a>
+    </div>
+</div>
+
+@if (Model.HasPendingAssignment && Model.CurrentAssignment != null)
+{
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <h5 class="alert-heading">🎁 You have an active assignment!</h5>
+        <p class="mb-0">
+            You are buying for <strong>@Model.CurrentAssignment.Receiver?.Participant?.Name</strong> 
+            in <strong>@Model.CurrentAssignment.Exchange?.Name @Model.CurrentAssignment.Exchange?.Year</strong>
+        </p>
+        <hr>
+        <a asp-controller="Assignments" asp-action="MyAssignment" class="btn btn-sm" style="background-color: #DF7861; color: white;">View My Assignment</a>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="card-title" style="color: #DF7861;">@Model.GroupsCount</h3>
+                <p class="card-text">Groups</p>
+                <a asp-controller="Groups" asp-action="Index" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="card-title" style="color: #DF7861;">@Model.ExchangesCount</h3>
+                <p class="card-text">Total Exchanges</p>
+                <a asp-controller="Exchanges" asp-action="Index" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="card-title" style="color: #DF7861;">@Model.ActiveExchangesCount</h3>
+                <p class="card-text">Active Exchanges</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="card-title" style="color: #DF7861;">@(Model.HasPendingAssignment ? "1" : "0")</h3>
+                <p class="card-text">Pending Assignments</p>
+                @if (Model.HasPendingAssignment)
+                {
+                    <a asp-controller="Assignments" asp-action="MyAssignment" class="btn btn-sm btn-outline-primary">View</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.RecentExchanges.Any())
+{
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Recent Exchanges</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Group</th>
+                            <th>Year</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var exchange in Model.RecentExchanges)
+                        {
+                            <tr>
+                                <td>@exchange.Name</td>
+                                <td>@exchange.Group?.Name</td>
+                                <td>@exchange.Year</td>
+                                <td>
+                                    @switch (exchange.Status)
+                                    {
+                                        case ChristmasGiftRandomizer.Models.ExchangeStatus.Draft:
+                                            <span class="badge bg-secondary">Draft</span>
+                                            break;
+                                        case ChristmasGiftRandomizer.Models.ExchangeStatus.Active:
+                                            <span class="badge bg-success">Active</span>
+                                            break;
+                                        case ChristmasGiftRandomizer.Models.ExchangeStatus.Completed:
+                                            <span class="badge bg-primary">Completed</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-controller="Exchanges" asp-action="Details" asp-route-id="@exchange.Id" class="btn btn-sm btn-outline-primary">View</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <h5>No exchanges yet</h5>
+        <p>Create your first group and exchange to get started!</p>
+        <a asp-controller="Groups" asp-action="Create" class="btn" style="background-color: #DF7861; color: white;">Create Your First Group</a>
+    </div>
+}
+

@@ -1,0 +1,36 @@
+@model ChristmasGiftRandomizer.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <h2>@ViewData["Title"]</h2>
+        <hr />
+        
+        <dl class="row">
+            <dt class="col-sm-3">First Name:</dt>
+            <dd class="col-sm-9">@Model.FirstName</dd>
+
+            <dt class="col-sm-3">Last Name:</dt>
+            <dd class="col-sm-9">@Model.LastName</dd>
+
+            <dt class="col-sm-3">Email:</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+
+            <dt class="col-sm-3">Member Since:</dt>
+            <dd class="col-sm-9">@Model.CreatedAt.ToString("MMMM dd, yyyy")</dd>
+        </dl>
+
+        <div class="mt-4">
+            <h4>Your Groups</h4>
+            <p class="text-muted">Groups you organize will appear here.</p>
+        </div>
+
+        <div class="mt-4">
+            <h4>Your Exchanges</h4>
+            <p class="text-muted">Exchanges you participate in will appear here.</p>
+        </div>
+    </div>
+</div>
+

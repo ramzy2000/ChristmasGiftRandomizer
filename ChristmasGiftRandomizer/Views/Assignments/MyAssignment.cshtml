@@ -1,0 +1,63 @@
+@model ChristmasGiftRandomizer.ViewModels.AssignmentViewModel
+@{
+    ViewData["Title"] = "My Assignment";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h2 class="mb-0">🎁 Your Secret Santa Assignment</h2>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <h4>@Model.Exchange.Name</h4>
+                    <p class="text-muted">@Model.Exchange.Year</p>
+                </div>
+
+                <div class="alert alert-info text-center" style="background-color: #f0f8ff; border-left: 4px solid #DF7861;">
+                    <h3 class="mb-3">You are buying for:</h3>
+                    <h2 class="display-4" style="color: #DF7861; font-weight: bold;">@Model.ReceiverName</h2>
+                </div>
+
+                <div class="mt-4">
+                    <dl class="row">
+                        <dt class="col-sm-4">Exchange:</dt>
+                        <dd class="col-sm-8">@Model.Exchange.Name</dd>
+
+                        <dt class="col-sm-4">Year:</dt>
+                        <dd class="col-sm-8">@Model.Exchange.Year</dd>
+
+                        @if (Model.Exchange.EventDate.HasValue)
+                        {
+                            <dt class="col-sm-4">Event Date:</dt>
+                            <dd class="col-sm-8">@Model.Exchange.EventDate.Value.ToString("MMMM dd, yyyy")</dd>
+                        }
+
+                        <dt class="col-sm-4">Receiver Email:</dt>
+                        <dd class="col-sm-8">@Model.ReceiverEmail</dd>
+
+                        @if (Model.Assignment.NotifiedAt.HasValue)
+                        {
+                            <dt class="col-sm-4">Notified:</dt>
+                            <dd class="col-sm-8">@Model.Assignment.NotifiedAt.Value.ToString("MMMM dd, yyyy 'at' h:mm tt")</dd>
+                        }
+                    </dl>
+                </div>
+
+                @if (Model.IsOrganizer)
+                {
+                    <div class="mt-4">
+                        <a asp-controller="Assignments" asp-action="ViewAll" asp-route-exchangeId="@Model.Exchange.Id" 
+                           class="btn btn-outline-primary">View All Assignments (Organizer View)</a>
+                    </div>
+                }
+
+                <div class="mt-4">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
