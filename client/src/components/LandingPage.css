@@ -50,22 +50,26 @@
   color: var(--text-secondary);
 }
 
+.organizer-section,
 .participant-section {
   margin-top: 2rem;
   padding-top: 2rem;
   border-top: 1px solid var(--border);
 }
 
+.organizer-section h2,
 .participant-section h2 {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
 }
 
+.organizer-section p,
 .participant-section p {
   color: var(--text-secondary);
   margin-bottom: 1.5rem;
 }
 
+.organizer-form,
 .participant-form {
   max-width: 400px;
   margin: 0 auto;

@@ -9,6 +9,7 @@ import { api } from '../services/api';
 vi.mock('../services/api', () => ({
   api: {
     createExchange: vi.fn(),
+    getExchangeByOrganizerToken: vi.fn(),
   }
 }));
 
@@ -190,6 +191,92 @@ describe('LandingPage', () => {
     await user.type(codeInput, 'abc123');
 
     expect(codeInput.value).toBe('ABC123');
+  });
+
+  it('should render organizer token input form', () => {
+    render(
+      <BrowserRouter>
+        <LandingPage />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByLabelText(/Organizer Token/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Access Exchange/i })).toBeInTheDocument();
+  });
+
+  it('should navigate to organizer dashboard on valid token', async () => {
+    const user = userEvent.setup();
+    const validToken = '12345678-1234-5678-90ab-cdef12345678';
+    const mockExchange = {
+      id: 'test-id',
+      name: 'Test Exchange',
+      organizerToken: validToken,
+      participantCode: 'TEST12',
+      status: 'draft',
+      participants: [],
+      createdAt: new Date().toISOString()
+    };
+
+    vi.mocked(api.getExchangeByOrganizerToken).mockResolvedValue(mockExchange);
+
+    render(
+      <BrowserRouter>
+        <LandingPage />
+      </BrowserRouter>
+    );
+
+    const tokenInput = screen.getByLabelText(/Organizer Token/i);
+    const submitButton = screen.getByRole('button', { name: /Access Exchange/i });
+
+    await user.type(tokenInput, validToken);
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(api.getExchangeByOrganizerToken).toHaveBeenCalledWith(validToken);
+      expect(mockNavigate).toHaveBeenCalledWith(`/organizer/${validToken}`);
+    });
+  });
+
+  it('should show error for invalid token format', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <BrowserRouter>
+        <LandingPage />
+      </BrowserRouter>
+    );
+
+    const tokenInput = screen.getByLabelText(/Organizer Token/i);
+    const submitButton = screen.getByRole('button', { name: /Access Exchange/i });
+
+    await user.type(tokenInput, 'invalid-token');
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Invalid token format/i)).toBeInTheDocument();
+    });
+  });
+
+  it('should show error for invalid organizer token', async () => {
+    const user = userEvent.setup();
+
+    vi.mocked(api.getExchangeByOrganizerToken).mockRejectedValue(new Error('Exchange not found'));
+
+    render(
+      <BrowserRouter>
+        <LandingPage />
+      </BrowserRouter>
+    );
+
+    const tokenInput = screen.getByLabelText(/Organizer Token/i);
+    const submitButton = screen.getByRole('button', { name: /Access Exchange/i });
+
+    await user.type(tokenInput, '00000000-0000-0000-0000-000000000000');
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Exchange not found/i)).toBeInTheDocument();
+    });
   });
 });
 
