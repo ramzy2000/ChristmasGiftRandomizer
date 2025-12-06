@@ -1,0 +1,81 @@
+.participant-view {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.match-form-section {
+  text-align: center;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.match-form-section h2 {
+  margin-bottom: 0.5rem;
+}
+
+.match-form-section p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.match-result {
+  text-align: center;
+}
+
+.match-card {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  margin: 2rem 0;
+  box-shadow: var(--shadow-lg);
+}
+
+.match-card h2 {
+  color: white;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+}
+
+.match-content {
+  margin-top: 1rem;
+}
+
+.match-label {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 1rem;
+}
+
+.match-name {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.match-info {
+  margin: 2rem 0;
+  padding: 1rem;
+  background: var(--background);
+  border-radius: 4px;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .match-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .match-card h2 {
+    font-size: 1.5rem;
+  }
+
+  .match-name {
+    font-size: 2rem;
+  }
+}
+

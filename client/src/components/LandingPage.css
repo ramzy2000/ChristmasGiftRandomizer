@@ -1,0 +1,80 @@
+.landing-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.landing-page .card {
+  text-align: center;
+}
+
+.landing-page h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.create-form {
+  text-align: left;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.divider {
+  margin: 2rem 0;
+  position: relative;
+  text-align: center;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--border);
+}
+
+.divider span {
+  background: var(--surface);
+  padding: 0 1rem;
+  position: relative;
+  color: var(--text-secondary);
+}
+
+.participant-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.participant-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.participant-section p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.participant-form {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+@media (max-width: 768px) {
+  .landing-page h1 {
+    font-size: 2rem;
+  }
+}
+
