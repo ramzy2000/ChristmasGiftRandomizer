@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import { ExchangeModel } from '../models/Exchange.js';
 import { ParticipantModel } from '../models/Participant.js';
-import { AddParticipantRequest } from '../types.js';
+import { AddParticipantRequest } from '../../../shared/types.js';
 import { validateToken, validateParticipantName, validateExcludedNames, validateParticipantCode } from '../middleware/validation.js';
+import { logger } from '../utils/logger.js';
 
 const router = Router();
 
@@ -45,12 +46,17 @@ router.post('/:token', validateToken, validateParticipantName, validateExcludedN
       excludedNames: participant.excludedNames
     });
   } catch (error) {
-    console.error('Error adding participant:', error);
-    res.status(500).json({ error: 'Failed to add participant' });
+    logger.error({ err: error, token: req.params.token }, 'Error adding participant');
+    const message = error instanceof Error ? error.message : 'Failed to add participant';
+    res.status(500).json({ 
+      error: message,
+      timestamp: new Date().toISOString()
+    });
   }
 });
 
 // Get participant's match by participant code
+// Note: validateParticipantCode normalizes the code, so invalid codes return 400 before route handler
 router.get('/match/:code/:name', validateParticipantCode, (req, res) => {
   try {
     const { code, name } = req.params;
@@ -95,8 +101,12 @@ router.get('/match/:code/:name', validateParticipantCode, (req, res) => {
       matchedWithName: matchedParticipant.name
     });
   } catch (error) {
-    console.error('Error fetching match:', error);
-    res.status(500).json({ error: 'Failed to fetch match' });
+    logger.error({ err: error, code: req.params.code, name: req.params.name }, 'Error fetching match');
+    const message = error instanceof Error ? error.message : 'Failed to fetch match';
+    res.status(500).json({ 
+      error: message,
+      timestamp: new Date().toISOString()
+    });
   }
 });
 
@@ -108,6 +118,13 @@ router.delete('/:token/:participantId', validateToken, (req, res) => {
     if (!participantId || typeof participantId !== 'string') {
       return res.status(400).json({ error: 'Participant ID is required' });
     }
+    
+    // Validate UUID format for participant ID
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(participantId)) {
+      return res.status(400).json({ error: 'Invalid participant ID format' });
+    }
+    
     const exchange = ExchangeModel.findByOrganizerToken(token);
     
     if (!exchange) {
@@ -116,6 +133,17 @@ router.delete('/:token/:participantId', validateToken, (req, res) => {
 
     if (exchange.status === 'matched') {
       return res.status(400).json({ error: 'Cannot delete participants after matching' });
+    }
+
+    // Check if participant exists before deleting
+    const participant = ParticipantModel.findById(participantId);
+    if (!participant) {
+      return res.status(404).json({ error: 'Participant not found' });
+    }
+    
+    // Verify participant belongs to this exchange
+    if (participant.exchangeId !== exchange.id) {
+      return res.status(404).json({ error: 'Participant not found in this exchange' });
     }
 
     ParticipantModel.delete(participantId);
@@ -127,8 +155,12 @@ router.delete('/:token/:participantId', validateToken, (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
-    console.error('Error deleting participant:', error);
-    res.status(500).json({ error: 'Failed to delete participant' });
+    logger.error({ err: error, token: req.params.token, participantId: req.params.participantId }, 'Error deleting participant');
+    const message = error instanceof Error ? error.message : 'Failed to delete participant';
+    res.status(500).json({ 
+      error: message,
+      timestamp: new Date().toISOString()
+    });
   }
 });
 

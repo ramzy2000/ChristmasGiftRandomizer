@@ -1,5 +1,5 @@
 import db from '../database/db.js';
-import { Exchange, Participant } from '../types.js';
+import { Exchange, Participant } from '../../../shared/types.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export class ExchangeModel {
@@ -62,6 +62,22 @@ export class ExchangeModel {
     const stmt = db.prepare('UPDATE exchanges SET status = ?, matched_at = ? WHERE id = ?');
     const matchedAt = status === 'matched' ? new Date().toISOString() : null;
     stmt.run(status, matchedAt, id);
+  }
+
+  /**
+   * Atomically update status only if current status is not 'matched'
+   * Returns true if update was successful, false if status was already 'matched'
+   * This prevents race conditions when multiple requests try to generate matches
+   */
+  static updateStatusIfNotMatched(id: string, status: Exchange['status']): boolean {
+    const matchedAt = status === 'matched' ? new Date().toISOString() : null;
+    const stmt = db.prepare(`
+      UPDATE exchanges 
+      SET status = ?, matched_at = ? 
+      WHERE id = ? AND status != 'matched'
+    `);
+    const result = stmt.run(status, matchedAt, id);
+    return result.changes > 0;
   }
 
   static getParticipants(exchangeId: string): Participant[] {

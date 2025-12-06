@@ -2,8 +2,9 @@ import { Router } from 'express';
 import { ExchangeModel } from '../models/Exchange.js';
 import { ParticipantModel } from '../models/Participant.js';
 import { MatchingService } from '../services/matchingService.js';
-import { CreateExchangeRequest } from '../types.js';
-import { validateExchangeName, validateToken } from '../middleware/validation.js';
+import { CreateExchangeRequest } from '../../../shared/types.js';
+import { validateExchangeName, validateToken, validateParticipantCode } from '../middleware/validation.js';
+import { logger } from '../utils/logger.js';
 
 const router = Router();
 
@@ -22,13 +23,17 @@ router.post('/', validateExchangeName, (req, res) => {
       createdAt: exchange.createdAt
     });
   } catch (error) {
-    console.error('Error creating exchange:', error);
-    res.status(500).json({ error: 'Failed to create exchange' });
+    logger.error({ err: error }, 'Error creating exchange');
+    const message = error instanceof Error ? error.message : 'Failed to create exchange';
+    res.status(500).json({ 
+      error: message,
+      timestamp: new Date().toISOString()
+    });
   }
 });
 
 // Get exchange by organizer token
-router.get('/organizer/:token', (req, res) => {
+router.get('/organizer/:token', validateToken, (req, res) => {
   try {
     const { token } = req.params;
     const exchange = ExchangeModel.findByOrganizerToken(token);
@@ -53,13 +58,17 @@ router.get('/organizer/:token', (req, res) => {
       matchedAt: exchange.matchedAt
     });
   } catch (error) {
-    console.error('Error fetching exchange:', error);
-    res.status(500).json({ error: 'Failed to fetch exchange' });
+    logger.error({ err: error, token: req.params.token }, 'Error fetching exchange by organizer token');
+    const message = error instanceof Error ? error.message : 'Failed to fetch exchange';
+    res.status(500).json({ 
+      error: message,
+      timestamp: new Date().toISOString()
+    });
   }
 });
 
 // Get exchange by participant code (limited info)
-router.get('/participant/:code', (req, res) => {
+router.get('/participant/:code', validateParticipantCode, (req, res) => {
   try {
     const { code } = req.params;
     const exchange = ExchangeModel.findByParticipantCode(code);
@@ -75,8 +84,12 @@ router.get('/participant/:code', (req, res) => {
       status: exchange.status
     });
   } catch (error) {
-    console.error('Error fetching exchange:', error);
-    res.status(500).json({ error: 'Failed to fetch exchange' });
+    logger.error({ err: error, token: req.params.token }, 'Error fetching exchange by organizer token');
+    const message = error instanceof Error ? error.message : 'Failed to fetch exchange';
+    res.status(500).json({ 
+      error: message,
+      timestamp: new Date().toISOString()
+    });
   }
 });
 
@@ -104,15 +117,22 @@ router.post('/:token/match', validateToken, (req, res) => {
       return res.status(400).json({ error: validation.error });
     }
 
+    // Atomically check and update status to prevent race conditions
+    // If another request already matched this exchange, this will fail
+    const statusUpdated = ExchangeModel.updateStatusIfNotMatched(exchange.id, 'matched');
+    if (!statusUpdated) {
+      // Status was already 'matched' by another request
+      return res.status(409).json({ error: 'Exchange was already matched by another request' });
+    }
+
     // Generate matches
     const result = MatchingService.generateMatches(exchange.participants);
     
     if (!result.success) {
+      // Rollback status update if matching failed
+      ExchangeModel.updateStatus(exchange.id, exchange.status);
       return res.status(400).json({ error: result.error });
     }
-
-    // Update exchange status
-    ExchangeModel.updateStatus(exchange.id, 'matched');
 
     // Reload exchange to get updated participants
     const updatedExchange = ExchangeModel.findById(exchange.id)!;
@@ -128,8 +148,12 @@ router.post('/:token/match', validateToken, (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error generating matches:', error);
-    res.status(500).json({ error: 'Failed to generate matches' });
+    logger.error({ err: error, token: req.params.token }, 'Error generating matches');
+    const message = error instanceof Error ? error.message : 'Failed to generate matches';
+    res.status(500).json({ 
+      error: message,
+      timestamp: new Date().toISOString()
+    });
   }
 });
 

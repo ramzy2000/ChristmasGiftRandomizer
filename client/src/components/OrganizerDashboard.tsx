@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../services/api';
-import type { Exchange } from '../types';
+import type { Exchange } from '../../../shared/types';
 import './OrganizerDashboard.css';
 
 function OrganizerDashboard() {

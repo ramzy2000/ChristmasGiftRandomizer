@@ -1,4 +1,4 @@
-import { MatchResult, Participant } from '../types.js';
+import { MatchResult, Participant } from '../../../shared/types.js';
 import { ParticipantModel } from '../models/Participant.js';
 
 /**
@@ -49,8 +49,9 @@ export class MatchingService {
     const matches: Array<{ giver: string; receiver: string }> = [];
     const usedGivers = new Set<string>();
     const usedReceivers = new Set<string>();
+    // Use object to share counter across recursive calls
+    const attemptCounter = { count: 0 };
     const maxAttempts = 10000; // Increased for larger groups
-    let attempts = 0;
 
     // Shuffle participants for randomness
     const shuffled = [...participants].sort(() => Math.random() - 0.5);
@@ -62,14 +63,12 @@ export class MatchingService {
       usedGivers,
       usedReceivers,
       maxAttempts,
-      attempts
+      attemptCounter
     );
 
     if (result.success && result.matches) {
-      // Apply matches to database
-      result.matches.forEach(match => {
-        ParticipantModel.updateMatch(match.giver, match.receiver);
-      });
+      // Apply matches to database in a transaction to ensure atomicity
+      ParticipantModel.updateMatchesInTransaction(result.matches);
 
       return result;
     }
@@ -93,17 +92,18 @@ export class MatchingService {
     usedGivers: Set<string>,
     usedReceivers: Set<string>,
     maxAttempts: number,
-    attempts: number
+    attemptCounter: { count: number }
   ): MatchResult {
+    // Increment attempt counter and check limit
+    attemptCounter.count++;
+    if (attemptCounter.count >= maxAttempts) {
+      return { success: false, error: 'Maximum attempts reached' };
+    }
+
     // Base case: all participants are givers (each gives to someone)
     // Since we also track receivers, this ensures everyone receives exactly once too
     if (usedGivers.size === participants.length) {
       return { success: true, matches: [...matches] };
-    }
-
-    // Prevent infinite loops
-    if (attempts >= maxAttempts) {
-      return { success: false, error: 'Maximum attempts reached' };
     }
 
     // Find first unmatched giver
@@ -127,6 +127,11 @@ export class MatchingService {
       return true;
     });
 
+    // If no valid receivers, backtrack immediately
+    if (validReceivers.length === 0) {
+      return { success: false, error: 'No valid matching found' };
+    }
+
     // Shuffle for randomness
     validReceivers.sort(() => Math.random() - 0.5);
 
@@ -143,7 +148,7 @@ export class MatchingService {
         usedGivers,
         usedReceivers,
         maxAttempts,
-        attempts + 1
+        attemptCounter
       );
 
       if (result.success) {
@@ -179,14 +184,20 @@ export class MatchingService {
     // Convert name-based exclusions to ID-based
     exclusionMap.forEach((excludedNames, participantId) => {
       const participant = participants.find(p => p.id === participantId)!;
+      const idExclusions = new Set<string>();
+      
       excludedNames.forEach(excludedName => {
         const excludedId = nameToId.get(excludedName.toLowerCase());
         if (excludedId) {
-          exclusionMap.get(participantId)!.add(excludedId);
+          idExclusions.add(excludedId);
         }
       });
+      
       // Add self-exclusion
-      exclusionMap.get(participantId)!.add(participantId);
+      idExclusions.add(participantId);
+      
+      // Replace the set with ID-based exclusions only
+      exclusionMap.set(participantId, idExclusions);
     });
 
     // Check if any participant has excluded everyone

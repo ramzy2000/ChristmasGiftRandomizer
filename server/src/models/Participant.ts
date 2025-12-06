@@ -1,5 +1,5 @@
 import db from '../database/db.js';
-import { Participant } from '../types.js';
+import { Participant } from '../../../shared/types.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export class ParticipantModel {
@@ -63,6 +63,22 @@ export class ParticipantModel {
   static updateMatch(giverId: string, receiverId: string): void {
     const stmt = db.prepare('UPDATE participants SET matched_with_id = ? WHERE id = ?');
     stmt.run(receiverId, giverId);
+  }
+
+  /**
+   * Update multiple matches in a transaction
+   * This ensures all matches are updated atomically or none are updated
+   */
+  static updateMatchesInTransaction(matches: Array<{ giver: string; receiver: string }>): void {
+    const updateStmt = db.prepare('UPDATE participants SET matched_with_id = ? WHERE id = ?');
+    
+    const updateMatches = db.transaction((matches: Array<{ giver: string; receiver: string }>) => {
+      for (const match of matches) {
+        updateStmt.run(match.receiver, match.giver);
+      }
+    });
+    
+    updateMatches(matches);
   }
 
   static delete(id: string): void {

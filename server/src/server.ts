@@ -1,4 +1,5 @@
 import app from './app.js';
+import { logger } from './utils/logger.js';
 
 const PORT = process.env.PORT || 3001;
 
@@ -6,6 +7,6 @@ const PORT = process.env.PORT || 3001;
 import './database/db.js';
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  logger.info({ port: PORT }, `Server running on http://localhost:${PORT}`);
 });
 

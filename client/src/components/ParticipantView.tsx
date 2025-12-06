@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { api } from '../services/api';
-import type { ParticipantMatch } from '../types';
+import type { ParticipantMatch } from '../../../shared/types';
 import './ParticipantView.css';
 
 function ParticipantView() {
@@ -26,11 +26,17 @@ function ParticipantView() {
 
   const loadExchange = async () => {
     if (!code) return;
+    setLoading(true);
     try {
       const data = await api.getExchangeByParticipantCode(code);
       setExchange(data);
+      // Only set loading to false if we're not going to load a match
+      if (!name) {
+        setLoading(false);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Exchange not found');
+      setLoading(false);
     }
   };
 

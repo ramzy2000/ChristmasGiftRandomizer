@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { NotificationService } from '../services/notificationService.js';
+import { logger } from '../utils/logger.js';
 
 const router = Router();
 
@@ -17,8 +18,12 @@ router.post('/subscribe', (req, res) => {
     
     res.json({ success: true });
   } catch (error) {
-    console.error('Error subscribing to notifications:', error);
-    res.status(500).json({ error: 'Failed to subscribe to notifications' });
+    logger.error({ err: error, participantId: req.body.participantId }, 'Error subscribing to notifications');
+    const message = error instanceof Error ? error.message : 'Failed to subscribe to notifications';
+    res.status(500).json({ 
+      error: message,
+      timestamp: new Date().toISOString()
+    });
   }
 });
 
